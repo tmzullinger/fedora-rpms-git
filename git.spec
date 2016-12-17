@@ -55,7 +55,7 @@
 
 Name:           git
 Version:        2.11.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -188,7 +188,6 @@ Summary:        Core package of git with minimal funcionality
 Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
-Requires:       rsync
 Requires:       zlib >= 1.2
 %description core
 Git is a fast, scalable, distributed revision control system with an
@@ -736,6 +735,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Dec 16 2016 Todd Zullinger <tmz@pobox.com> - 2.11.0-2
+- Remove unnecessary rsync requirement from git-core
+
 * Wed Nov 30 2016 Jon Ciesla <limburgher@gmail.com> - 2.11.0-1
 - Update to 2.11.0
 
