@@ -602,6 +602,8 @@ grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
 grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 
+%check
+make test
 
 %clean
 rm -rf %{buildroot}
@@ -753,6 +755,7 @@ rm -rf %{buildroot}
 - Remove unnecessary rsync requirement from git-core
 - Move gnome-keyring credential helper from git-core to git
 - Enable libsecret credential helper
+- Run git test suite
 
 * Wed Nov 30 2016 Jon Ciesla <limburgher@gmail.com> - 2.11.0-1
 - Update to 2.11.0
