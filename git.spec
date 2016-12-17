@@ -138,8 +138,8 @@ Requires:       emacs-filesystem >= %{_emacs_version}
 # These can be removed in Fedora 26
 Obsoletes:      emacs-git <= 2.4.5
 Obsoletes:      emacs-git-el <= 2.4.5
-Provides:       emacs-git <= 2.4.5
-Provides:       emacs-git-el <= 2.4.5
+Provides:       emacs-git = %{version}-%{release}
+Provides:       emacs-git-el = %{version}-%{release}
 %endif
 
 #Provides:       git-core = %{version}-%{release}
@@ -757,6 +757,7 @@ rm -rf %{buildroot}
 - Enable libsecret credential helper
 - Run git test suite
 - Use %%{_mandir} in git/git-core file list filters
+- Fix version of emacs-git and emacs-git-el provides
 
 * Wed Nov 30 2016 Jon Ciesla <limburgher@gmail.com> - 2.11.0-1
 - Update to 2.11.0
