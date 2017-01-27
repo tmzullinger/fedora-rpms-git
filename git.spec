@@ -111,9 +111,6 @@ BuildRequires:  expat-devel
 BuildRequires:  gettext
 BuildRequires:  gnupg2
 BuildRequires:  %{libcurl_devel}
-%if %{gnome_keyring}
-BuildRequires:  libgnome-keyring-devel
-%endif
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
@@ -168,6 +165,7 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
+Requires:       git-gnome-keyring = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
@@ -362,6 +360,17 @@ Requires:       emacs-git = %{version}-%{release}
 %description -n emacs-git-el
 %{summary}.
 %endif
+
+%if %{gnome_keyring}
+%package gnome-keyring
+Summary:        Git module for working with gnome-keyring
+BuildRequires:  libgnome-keyring-devel
+Requires:       git = %{version}-%{release}
+Requires:       gnome-keyring
+%description gnome-keyring
+%{summary}.
+%endif
+
 
 %prep
 # Verify GPG signatures
@@ -611,7 +620,8 @@ find contrib -type f | xargs chmod -x
 not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
-grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
+grep -E  "$not_core_re" bin-man-doc-files \
+    | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
 %check
 make test
@@ -752,6 +762,12 @@ rm -rf %{buildroot}
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
+
+%if %{gnome_keyring}
+%files gnome-keyring
+%defattr(-,root,root)
+%{gitcoredir}/git-credential-gnome-keyring
+%endif
 
 
 %files all
