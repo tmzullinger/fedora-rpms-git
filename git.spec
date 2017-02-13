@@ -774,6 +774,12 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Feb 13 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.0-2
+- remove non-ASCII characters from description and title of packages
+- fix requiremets
+- fix spec for RHEL system
+- split credential-gnome-keyring into separate rpm
+
 * Fri Dec 16 2016 Todd Zullinger <tmz@pobox.com> - 2.11.0-2
 - Remove unnecessary rsync requirement from git-core
 - Move gnome-keyring credential helper from git-core to git
