@@ -34,7 +34,6 @@
 %global bashcomp_pkgconfig  1
 %global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
-%global desktop_vendor_tag  0
 %global gnome_keyring       1
 %global libsecret           1
 %global use_new_rpm_filters 1
@@ -43,11 +42,17 @@
 %global bashcomp_pkgconfig  0
 %global bashcompdir         %{_sysconfdir}/bash_completion.d
 %global bashcomproot        %{bashcompdir}
-%global desktop_vendor_tag  1
 %global gnome_keyring       0
 %global libsecret           0
 %global use_new_rpm_filters 0
 %global use_systemd         0
+%endif
+
+# This one macro is for F19+ and EL-6+
+%if 0%{?fedora} >= 19 || 0%{?rhel} >= 6
+%global desktop_vendor_tag  0
+%else
+%global desktop_vendor_tag  1
 %endif
 
 # Settings for EL <= 7
@@ -106,14 +111,13 @@ BuildRequires:  expat-devel
 BuildRequires:  gettext
 BuildRequires:  gnupg2
 BuildRequires:  %{libcurl_devel}
-%if %{gnome_keyring}
-BuildRequires:  libgnome-keyring-devel
-%endif
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
 BuildRequires:  pcre-devel
+%if 0%{?fedora} && 0%{?fedora} >= 21
 BuildRequires:  perl-generators
+%endif
 BuildRequires:  perl(Test)
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
@@ -161,6 +165,7 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
+Requires:       git-gnome-keyring = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
@@ -189,6 +194,7 @@ Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
 Requires:       zlib >= 1.2
+Requires:       libcurl
 %description core
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -208,7 +214,7 @@ Requires:       git-core = %{version}-%{release}
 Documentation files for git-core package including man pages.
 
 %package daemon
-Summary:        Git protocol dæmon
+Summary:        Git protocol daemon
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}
 %if %{use_systemd}
@@ -220,7 +226,7 @@ Requires(postun): systemd
 Requires:       xinetd
 %endif
 %description daemon
-The git dæmon for supporting git:// access to git repositories
+The git daemon for supporting git:// access to git repositories
 
 %package -n gitweb
 Summary:        Simple web interface to git repositories
@@ -264,6 +270,7 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
+Requires:       perl(Git)
 %description cvs
 Git tools for importing CVS repositories.
 
@@ -276,6 +283,7 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
+Requires:       perl(Git)
 %description email
 Git tools for sending email.
 
@@ -353,6 +361,17 @@ Requires:       emacs-git = %{version}-%{release}
 %{summary}.
 %endif
 
+%if %{gnome_keyring}
+%package gnome-keyring
+Summary:        Git module for working with gnome-keyring
+BuildRequires:  libgnome-keyring-devel
+Requires:       git = %{version}-%{release}
+Requires:       gnome-keyring
+%description gnome-keyring
+%{summary}.
+%endif
+
+
 %prep
 # Verify GPG signatures
 gpghome="$(mktemp -qd)" # Ensure we don't use any existing gpg keyrings
@@ -397,11 +416,11 @@ USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
-GITWEB_PROJECTROOT = %{_var}/lib/git
+GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
-gitwebdir = %{_var}/www/git
+gitwebdir = %{_localstatedir}/www/git
 EOF
 
 %if "%{gitcoredir}" == "%{_bindir}"
@@ -507,7 +526,7 @@ rm -f %{buildroot}%{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}/gi
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
-sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
+sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
     %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
@@ -537,7 +556,7 @@ sed -i "/Git\/SVN/ d" perl-git-files
 rm -rf %{buildroot}%{_mandir}
 %endif
 
-mkdir -p %{buildroot}%{_var}/lib/git
+mkdir -p %{buildroot}%{_localstatedir}/lib/git
 %if %{use_systemd}
 mkdir -p %{buildroot}%{_unitdir}
 cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
@@ -548,7 +567,7 @@ enable_ipv6="        # xinetd does not enable IPv6 by default
         flags           = IPv6"
 perl -p \
     -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
-    -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
+    -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
 %if %{enable_ipv6}
     -e "s|^}|$enable_ipv6\n$&|;" \
 %endif
@@ -601,7 +620,8 @@ find contrib -type f | xargs chmod -x
 not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
-grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
+grep -E  "$not_core_re" bin-man-doc-files \
+    | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
 %check
 make test
@@ -732,7 +752,7 @@ rm -rf %{buildroot}
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
 %endif
 %{gitcoredir}/git-daemon
-%{_var}/lib/git
+%{_localstatedir}/lib/git
 %{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
 %{!?_without_docs: %doc Documentation/*daemon*.html}
 
@@ -741,13 +761,25 @@ rm -rf %{buildroot}
 %doc gitweb/INSTALL gitweb/README
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
-%{_var}/www/git/
+%{_localstatedir}/www/git/
+
+%if %{gnome_keyring}
+%files gnome-keyring
+%defattr(-,root,root)
+%{gitcoredir}/git-credential-gnome-keyring
+%endif
 
 
 %files all
 # No files for you!
 
 %changelog
+* Mon Feb 13 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.0-2
+- remove non-ASCII characters from description and title of packages
+- fix requiremets
+- fix spec for RHEL system
+- split credential-gnome-keyring into separate rpm
+
 * Fri Dec 16 2016 Todd Zullinger <tmz@pobox.com> - 2.11.0-2
 - Remove unnecessary rsync requirement from git-core
 - Move gnome-keyring credential helper from git-core to git
