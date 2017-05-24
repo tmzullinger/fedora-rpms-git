@@ -70,7 +70,7 @@
 
 Name:           git
 Version:        2.13.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -136,6 +136,28 @@ BuildRequires:  pkgconfig(bash-completion)
 # For macros
 BuildRequires:  systemd
 %endif
+
+# Test suite requirements
+BuildRequires:  cvs
+BuildRequires:  cvsps
+BuildRequires:  gnupg
+BuildRequires:  highlight
+BuildRequires:  httpd
+BuildRequires:  jgit
+BuildRequires:  pcre
+BuildRequires:  perl(CGI)
+BuildRequires:  perl(CGI::Carp)
+BuildRequires:  perl(CGI::Util)
+BuildRequires:  perl(DBD::SQLite)
+BuildRequires:  perl(Digest::MD5)
+BuildRequires:  perl(IO::Pty)
+BuildRequires:  perl(Mail::Address)
+BuildRequires:  perl(Memoize)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Time::HiRes)
+BuildRequires:  subversion
+BuildRequires:  subversion-perl
+BuildRequires:  time
 
 Requires:       git-core = %{version}-%{release}
 Requires:       git-core-doc = %{version}-%{release}
@@ -633,7 +655,9 @@ grep -E  "$not_core_re" bin-man-doc-files \
     | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
 %check
-make test
+# Set LANG so various UTF-8 tests are run
+export LANG=en_US.UTF-8
+make -O %{?_smp_mflags} test
 
 %clean
 rm -rf %{buildroot}
@@ -783,6 +807,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue May 23 2017 Todd Zullinger <tmz@pobox.com> - 2.13.0-3
+- Improve test suite coverage and speed
+
 * Wed May 17 2017 Todd Zullinger <tmz@pobox.com> - 2.13.0-2
 - Use default, collision-detecting SHA1 implementation
 
