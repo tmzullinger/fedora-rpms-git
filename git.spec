@@ -150,7 +150,7 @@ BuildRequires:  systemd
 %endif
 
 Requires:       git-core = %{version}-%{release}
-Requires:       git-core-doc = %{version}-%{release}
+Obsoletes:      git-core-doc < 2.13.3-2
 Requires:       perl(Error)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
@@ -225,14 +225,6 @@ The git-core rpm installs really the core tools with minimal
 dependencies. Install git package for common set of tools.
 To install all git packages, including tools for integrating with
 other SCMs, install the git-all meta-package.
-
-%package core-doc
-Summary:        Documentation files for git-core
-Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}
-
-%description core-doc
-Documentation files for git-core package including man pages.
 
 %package daemon
 Summary:        Git protocol daemon
@@ -553,10 +545,10 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
-# Clean up contrib/credential to avoid cruft in the git-core-doc docdir
+# Clean up contrib/credential to avoid cruft in the git docdir
 rm -rf contrib/credential
 
-# Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
+# Clean up contrib/subtree to avoid cruft in the git docdir
 rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 
 # git-archimport is not supported
@@ -638,9 +630,9 @@ find contrib -type f | xargs chmod -x
 # Split core files
 not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
-grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
+grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > bin-man-doc-git-files
 grep -E  "$not_core_re" bin-man-doc-files \
-    | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
+    | grep -v "credential-gnome-keyring" >> bin-man-doc-git-files
 
 ##### DOC
 # place doc files into %%{_pkgdocdir} and split them into expected packages
@@ -653,7 +645,7 @@ cp -r README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%
 cp -r Documentation/*.html Documentation/docbook-xsl.css %{buildroot}%{_pkgdocdir}/
 cp -r Documentation/{howto,technical} %{buildroot}%{_pkgdocdir}/
 find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
-    |grep -o "%{_pkgdocdir}.*$" >> man-doc-files-core
+    |grep -o "%{_pkgdocdir}.*$" >> bin-man-doc-git-files
 %endif
 
 {
@@ -664,7 +656,7 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
         | grep -o "%{_pkgdocdir}.*$"
     find %{buildroot}%{_pkgdocdir} -type d | grep -o "%{_pkgdocdir}.*$" \
         | sed "s/^/\%dir /"
-} >> man-doc-files-core
+} >> bin-man-doc-git-files
 
 #NOTE: I guess we can throw it out
 #mkdir -p %{buildroot}%{_docdir}/gitweb
@@ -703,6 +695,8 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
+%exclude %{_pkgdocdir}/contrib/*/*.py[co]
+%{_pkgdocdir}/contrib/hooks
 
 %files core -f bin-files-core
 %defattr(-,root,root)
@@ -715,11 +709,6 @@ rm -rf %{buildroot}
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
 %{bashcomproot}
 %{_datadir}/git-core/
-
-%files core-doc -f man-doc-files-core
-%defattr(-,root,root)
-%exclude %{_pkgdocdir}/contrib/*/*.py[co]
-%{_pkgdocdir}/contrib/hooks
 
 %files p4
 %defattr(-,root,root)
