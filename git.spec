@@ -137,7 +137,7 @@ BuildRequires:  %{libcurl_devel}
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
-BuildRequires:  pcre-devel
+BuildRequires:  pcre2-devel
 %if 0%{?fedora} && 0%{?fedora} >= 21
 BuildRequires:  perl-generators
 %endif
@@ -438,7 +438,7 @@ V = 1
 CFLAGS = %{optflags}
 LDFLAGS = %{__global_ldflags}
 NEEDS_CRYPTO_WITH_SSL = 1
-USE_LIBPCRE = 1
+USE_LIBPCRE2 = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
@@ -834,6 +834,7 @@ rm -rf %{buildroot}
 %changelog
 * Sat Jul 22 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.0.rc0
 - Update to 2.14.0.rc0
+- Use pcre2 library
 
 * Fri Jul 21 2017 Todd Zullinger <tmz@pobox.com> - 2.13.3-2.1
 - Bump release for COPR builds
