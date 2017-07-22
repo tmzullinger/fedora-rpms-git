@@ -77,19 +77,22 @@
 %global test_links 0
 %endif
 
+# Define for release candidates
+%global rcrev   .rc0
+
 Name:           git
-Version:        2.13.3
-Release:        2%{?dist}
+Version:        2.14.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            https://git-scm.com/
-Source0:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
-Source1:        https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.xz
-Source2:        https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
-Source3:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.sign
-Source4:        https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.sign
-Source5:        https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.sign
+Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
+Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-htmldocs-%{version}%{?rcrev}.tar.xz
+Source2:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-manpages-%{version}%{?rcrev}.tar.xz
+Source3:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
+Source4:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-htmldocs-%{version}%{?rcrev}.tar.sign
+Source5:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-manpages-%{version}%{?rcrev}.tar.sign
 
 # Junio C Hamano's key is used to sign git releases, it can be found in the
 # junio-gpg-pub tag within git.
@@ -409,7 +412,7 @@ for src in %{SOURCE0} %{SOURCE1} %{SOURCE2}; do
 done
 rm -rf "$gpghome" # Cleanup tmp gpg home dir
 
-%setup -q
+%setup -q -n %{name}-%{version}%{?rcrev}
 %patch0 -p1
 %patch1 -p1
 %if %{emacs_old}
@@ -829,6 +832,12 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Jul 22 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.0.rc0
+- Update to 2.14.0.rc0
+
+* Fri Jul 21 2017 Todd Zullinger <tmz@pobox.com> - 2.13.3-2.1
+- Bump release for COPR builds
+
 * Thu Jul 20 2017 Petr Stodulka <pstodulk@redhat.com> - 2.13.3-2
 - Move documentation files from all subpackages into the %%{_pkgdocdir}
   directory, so links inside doc and man files are correct
