@@ -1,36 +1,9 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 
-# Settings for EL-5
-# - Leave git-* binaries in %%{_bindir}
-# - Don't use noarch subpackages
-# - Use proper libcurl devel package
-# - Patch emacs and tweak docbook spaces
-# - Explicitly enable ipv6 for git-daemon
-# - Use prebuilt documentation, asciidoc is too old
-# - Define missing python macro
-%if 0%{?rhel} && 0%{?rhel} <= 5
-%global gitcoredir          %{_bindir}
-%global noarch_sub          0
-%global libcurl_devel       curl-devel
-%global emacs_old           1
-%global docbook_suppress_sp 1
-%global enable_ipv6         1
-%global use_prebuilt_docs   1
-%global filter_yaml_any     1
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%else
 %global gitcoredir          %{_libexecdir}/git-core
-%global noarch_sub          1
-%global libcurl_devel       libcurl-devel
-%global emacs_old           0
-%global docbook_suppress_sp 0
-%global enable_ipv6         0
-%global use_prebuilt_docs   0
-%global filter_yaml_any     0
-%endif
 
 # Settings for F-19+ and EL-7+
-%if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %global bashcomp_pkgconfig  1
 %global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
@@ -50,17 +23,10 @@
 # to use it on older fedora instead of libsecret. So that's
 # why this ugly solution
 # TODO: we should maybe update conditions according to supported systems
-%if 0%{?fedora} >= 19 && 0%{?fedora} < 26 || 0%{?rhel} == 7
+%if ( 0%{?fedora} && 0%{?fedora} < 26 ) || 0%{?rhel} == 7
 %global gnome_keyring       1
 %else
 %global gnome_keyring       0
-%endif
-
-# This one macro is for F19+ and EL-6+
-%if 0%{?fedora} >= 19 || 0%{?rhel} >= 6
-%global desktop_vendor_tag  0
-%else
-%global desktop_vendor_tag  1
 %endif
 
 # Settings for EL <= 7
@@ -88,11 +54,7 @@ License:        GPLv2
 Group:          Development/Tools
 URL:            https://git-scm.com/
 Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
-Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-htmldocs-%{version}%{?rcrev}.tar.xz
-Source2:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-manpages-%{version}%{?rcrev}.tar.xz
-Source3:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
-Source4:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-htmldocs-%{version}%{?rcrev}.tar.sign
-Source5:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-manpages-%{version}%{?rcrev}.tar.sign
+Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
 
 # Junio C Hamano's key is used to sign git releases, it can be found in the
 # junio-gpg-pub tag within git.
@@ -116,12 +78,10 @@ Source16:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://bugzilla.redhat.com/600411
-Patch3:         git-1.7-el5-emacs-support.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+%if ! 0%{?_without_docs}
 BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
 %if %{test_links}
@@ -133,12 +93,12 @@ BuildRequires:  emacs
 BuildRequires:  expat-devel
 BuildRequires:  gettext
 BuildRequires:  gnupg2
-BuildRequires:  %{libcurl_devel}
+BuildRequires:  libcurl-devel
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
 BuildRequires:  pcre2-devel
-%if 0%{?fedora} && 0%{?fedora} >= 21
+%if 0%{?fedora}
 BuildRequires:  perl-generators
 %endif
 BuildRequires:  perl(Test)
@@ -160,7 +120,7 @@ Requires:       perl(Term::ReadKey)
 %endif
 Requires:       perl-Git = %{version}-%{release}
 
-%if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 Requires:       emacs-filesystem >= %{_emacs_version}
 # These can be removed in Fedora 26
 Obsoletes:      emacs-git <= 2.4.5
@@ -184,9 +144,7 @@ tools for integrating with other SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}
 %if %{gnome_keyring}
 Requires:       git-gnome-keyring = %{version}-%{release}
@@ -255,9 +213,7 @@ The git daemon for supporting git:// access to git repositories
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}
 
 %description -n gitweb
@@ -266,9 +222,7 @@ Simple web interface to track changes in git repositories
 %package p4
 Summary:        Git tools for working with Perforce depots
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 BuildRequires:  python
 Requires:       git = %{version}-%{release}
 %description p4
@@ -288,9 +242,7 @@ Git tools for importing Subversion repositories.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
@@ -301,9 +253,7 @@ Git tools for importing CVS repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
@@ -314,9 +264,7 @@ Git tools for sending email.
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
 %description gui
@@ -325,9 +273,7 @@ Git GUI tool.
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
 Git revision tree visualiser.
@@ -335,9 +281,7 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 Requires:       perl(Error)
@@ -349,9 +293,7 @@ Perl interface to Git.
 %package -n perl-Git-SVN
 Summary:        Perl interface to Git::SVN
 Group:          Development/Libraries
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
@@ -363,12 +305,8 @@ Perl interface to Git.
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
 Requires:       git = %{version}-%{release}
-%if %{noarch_sub}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
-%else
-Requires:       emacs-common
-%endif
 
 %description -n emacs-git
 %{summary}.
@@ -376,9 +314,7 @@ Requires:       emacs-common
 %package -n emacs-git-el
 Summary:        Elisp source files for git version control system support for Emacs
 Group:          Applications/Editors
-%if %{noarch_sub}
 BuildArch:      noarch
-%endif
 Requires:       emacs-git = %{version}-%{release}
 
 %description -n emacs-git-el
@@ -400,36 +336,22 @@ Requires:       gnome-keyring
 # Verify GPG signatures
 gpghome="$(mktemp -qd)" # Ensure we don't use any existing gpg keyrings
 key="%{SOURCE9}"
+src="%{SOURCE0}"
 # Ignore noisy output from GnuPG 2.0, used on EL <= 7
 # https://bugs.gnupg.org/gnupg/issue1555
 gpg2 --dearmor --quiet --batch --yes $key >/dev/null
-for src in %{SOURCE0} %{SOURCE1} %{SOURCE2}; do
-    # Upstream signs the uncompressed tarballs
-    tar=${src/%.xz/}
-    xz -dc $src > $tar
-    gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
-    rm -f $tar
-done
-rm -rf "$gpghome" # Cleanup tmp gpg home dir
+# Upstream signs the uncompressed tarballs
+tar=${src/%.xz/}
+xz -dc $src > $tar
+gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
+rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 
 %setup -q -n %{name}-%{version}%{?rcrev}
 %patch0 -p1
 %patch1 -p1
-%if %{emacs_old}
-%patch3 -p1
-%endif
 
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
-
-%if %{use_prebuilt_docs}
-mkdir -p prebuilt_docs/{html,man}
-xz -dc %{SOURCE1} | tar xf - -C prebuilt_docs/html
-xz -dc %{SOURCE2} | tar xf - -C prebuilt_docs/man
-# Remove non-html files
-find prebuilt_docs/html -type f ! -name '*.html' | xargs rm
-find prebuilt_docs/html -type d | xargs rmdir --ignore-fail-on-non-empty
-%endif
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -453,11 +375,6 @@ EOF
 echo gitexecdir = %{_bindir} >> config.mak
 %endif
 
-%if %{docbook_suppress_sp}
-# This is needed for 1.69.1-1.71.0
-echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
-%endif
-
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
 # YAML::Any is optional and not available on el5
@@ -471,11 +388,7 @@ echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
 cat << \EOF > %{name}-req
 #!/bin/sh
 %{__perl_requires} $* |\
-sed \
-%if %{filter_yaml_any}
-    -e '/perl(YAML::Any)/d' \
-%endif
-    -e '/perl(packed-refs)/d'
+sed -e '/perl(packed-refs)/d'
 EOF
 
 %global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
@@ -484,7 +397,7 @@ chmod +x %{__perl_requires}
 
 %build
 make %{?_smp_mflags} all
-%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+%if ! 0%{?_without_docs}
 make %{?_smp_mflags} doc
 %endif
 
@@ -506,17 +419,13 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 %install
 rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install
-%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+%if ! 0%{?_without_docs}
 make %{?_smp_mflags} INSTALLDIRS=vendor install-doc
 %else
 cp -a prebuilt_docs/man/* %{buildroot}%{_mandir}
 cp -a prebuilt_docs/html/* Documentation/
 %endif
 
-%if %{emacs_old}
-%global _emacs_sitelispdir %{_datadir}/emacs/site-lisp
-%global _emacs_sitestartdir %{_emacs_sitelispdir}/site-start.d
-%endif
 %global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
     emacsdir=%{buildroot}%{elispdir}
@@ -543,9 +452,7 @@ install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitcoredir}
 
 make -C contrib/subtree install
-%if ! %{use_prebuilt_docs}
 make -C contrib/subtree install-doc
-%endif
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -585,15 +492,9 @@ mkdir -p %{buildroot}%{_unitdir}
 cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
 %else
 mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
-# On EL <= 5, xinetd does not enable IPv6 by default
-enable_ipv6="        # xinetd does not enable IPv6 by default
-        flags           = IPv6"
 perl -p \
     -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
     -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
-%if %{enable_ipv6}
-    -e "s|^}|$enable_ipv6\n$&|;" \
-%endif
     %{SOURCE11} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 %endif
 
@@ -620,11 +521,7 @@ install -pm 644 contrib/completion/git-prompt.sh \
     %{buildroot}%{_datadir}/git-core/contrib/completion/
 
 # install git-gui .desktop file
-desktop-file-install \
-%if %{desktop_vendor_tag}
-  --vendor fedora \
-%endif
-  --dir=%{buildroot}%{_datadir}/applications %{SOURCE13}
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE13}
 
 # find translations
 %find_lang %{name} %{name}.lang
@@ -698,7 +595,7 @@ rm -rf %{buildroot}
 
 %files -f bin-man-doc-git-files
 %defattr(-,root,root)
-%if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
 %endif
@@ -835,6 +732,7 @@ rm -rf %{buildroot}
 * Sat Jul 22 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.0.rc0
 - Update to 2.14.0.rc0
 - Use pcre2 library
+- Remove EL-5 and old Fedora conditionals
 
 * Fri Jul 21 2017 Todd Zullinger <tmz@pobox.com> - 2.13.3-2.1
 - Bump release for COPR builds
