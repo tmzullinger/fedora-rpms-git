@@ -78,6 +78,8 @@ Source16:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# https://public-inbox.org/git/20170724184707.22828-1-szeder.dev@gmail.com/
+Patch2:         0001-commit-allow-suppression-of-commit-message-template-.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -349,6 +351,7 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 %setup -q -n %{name}-%{version}%{?rcrev}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
@@ -731,6 +734,7 @@ rm -rf %{buildroot}
 %changelog
 * Mon Jul 24 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.1.rc1
 - Update to 2.14.0.rc1
+- Allow suppression of commit message template advice
 
 * Sat Jul 22 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.0.rc0
 - Update to 2.14.0.rc0
