@@ -44,11 +44,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.14.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -729,6 +729,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jul 24 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.1.rc1
+- Update to 2.14.0.rc1
+
 * Sat Jul 22 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-0.0.rc0
 - Update to 2.14.0.rc0
 - Use pcre2 library
