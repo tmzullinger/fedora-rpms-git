@@ -841,7 +841,7 @@ GIT_SKIP_TESTS="$GIT_SKIP_TESTS t9115"
 %endif
 # endif %%{power64}
 
-%ifarch s390x && 0%{?rhel} == 8
+%if 0%{?rhel} == 8 && "%{_arch}" == "s390x"
 # Skip tests which fail on s390x on rhel-8
 #
 # The following tests fail on s390x & el8.  The cause should be investigated.
@@ -850,16 +850,26 @@ GIT_SKIP_TESTS="$GIT_SKIP_TESTS t9115"
 #
 # t5300.10 'unpack without delta'
 # t5300.12 'unpack with REF_DELTA'
+# t5300.13 'unpack with REF_DELTA'
 # t5300.14 'unpack with OFS_DELTA'
+# t5300.18 'compare delta flavors'
+# t5300.20 'use packed deltified (REF_DELTA) objects'
+# t5300.23 'verify pack'
+# t5300.24 'verify pack -v'
+# t5300.25 'verify-pack catches mismatched .idx and .pack files'
+# t5300.29 'verify-pack catches a corrupted sum of the index file itself'
+# t5300.30 'build pack index for an existing pack'
+# t5300.45 'make sure index-pack detects the SHA1 collision'
+# t5300.46 'make sure index-pack detects the SHA1 collision (large blobs)'
 # t5303.5  'create corruption in data of first object'
 # t5303.7  '... and loose copy of second object allows for partial recovery'
 # t5303.11 'create corruption in data of first delta'
 # t6300.35 'basic atom: head objectsize:disk'
 # t6300.91 'basic atom: tag objectsize:disk'
 # t6300.92 'basic atom: tag *objectsize:disk'
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5300.{10,12,14} t5303.{5,7,11} t6300.{35,91,92}"
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5300.1[02348] t5300.2[03459] t5300.30 t5300.4[56] t5303.[57] t5303.11 t6300.35 t6300.9[12]"
 %endif
-# endif s390x && rhel == 8
+# endif rhel == 8 && arch == s390x
 
 export GIT_SKIP_TESTS
 
@@ -1038,6 +1048,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Tue Jun 14 2022 Todd Zullinger <tmz@pobox.com> - 2.37.0-0.0.rc0
 - update to 2.37.0-rc0
+- fix GIT_SKIP_TESTS for EL8 s390x
 
 * Fri Jun 03 2022 Jitka Plesnikova <jplesnik@redhat.com> - 2.36.1-1.2
 - Perl 5.36 re-rebuild of bootstrapped packages
