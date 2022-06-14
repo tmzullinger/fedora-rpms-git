@@ -6,13 +6,6 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
-# Settings for Fedora >= 34
-%if 0%{?fedora} >= 34
-%bcond_with                 emacs
-%else
-%bcond_without              emacs
-%endif
-
 # Settings for Fedora
 %if 0%{?fedora}
 # linkchecker is not available on EL
@@ -137,10 +130,6 @@ BuildRequires:  linkchecker
 BuildRequires:  coreutils
 BuildRequires:  desktop-file-utils
 BuildRequires:  diffutils
-%if %{with emacs}
-BuildRequires:  emacs-common
-%endif
-# endif emacs-common
 %if 0%{?rhel} && 0%{?rhel} < 9
 # Require epel-rpm-macros for the %%gpgverify macro on EL-7/EL-8, and
 # %%build_cflags & %%build_ldflags on EL-7.
@@ -266,17 +255,6 @@ Requires:       perl(Term::ReadKey)
 %endif
 # endif ! defined perl_bootstrap
 Requires:       perl-Git = %{version}-%{release}
-
-%if %{with emacs} && %{defined _emacs_version}
-Requires:       emacs-filesystem >= %{_emacs_version}
-%endif
-# endif with emacs && defined _emacs_version
-
-# Obsolete emacs-git if it's disabled
-%if %{without emacs}
-Obsoletes:      emacs-git < %{?epoch:%{epoch}:}%{version}-%{release}
-%endif
-# endif without emacs
 
 # Obsolete git-cvs if it's disabled
 %if %{without cvs}
@@ -636,19 +614,6 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
 
 %make_install -C contrib/contacts
 
-%if %{with emacs}
-%global elispdir %{_emacs_sitelispdir}/git
-pushd contrib/emacs >/dev/null
-for el in *.el ; do
-    # Note: No byte-compiling is done.  These .el files are one-line stubs
-    # which only serve to point users to better alternatives.
-    install -Dpm 644 $el %{buildroot}%{elispdir}/$el
-    rm -f $el # clean up to avoid cruft in git-core-doc
-done
-popd >/dev/null
-%endif
-# endif with emacs
-
 %if %{with libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
     %{buildroot}%{gitexecdir}
@@ -915,10 +880,6 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %systemd_postun_with_restart git.socket
 
 %files -f bin-man-doc-git-files
-%if %{with emacs}
-%{elispdir}
-%endif
-# endif with emacs
 %{_datadir}/git-core/contrib/diff-highlight
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
@@ -1049,6 +1010,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Tue Jun 14 2022 Todd Zullinger <tmz@pobox.com> - 2.37.0-0.0.rc0
 - update to 2.37.0-rc0
 - fix GIT_SKIP_TESTS for EL8 s390x
+- remove --with/--without emacs build conditional
 
 * Fri Jun 03 2022 Jitka Plesnikova <jplesnik@redhat.com> - 2.36.1-1.2
 - Perl 5.36 re-rebuild of bootstrapped packages
