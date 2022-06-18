@@ -6,6 +6,7 @@ missing AUTOIDENT
 missing CASE_INSENSITIVE_FS
 missing DONTHAVEIT
 missing ([!]LONG_IS_64BIT,)?EXPENSIVE
+missing FSMONITOR_DAEMON
 missing JGIT
 missing !?LAZY_(TRUE|FALSE)
 missing MINGW
@@ -26,3 +27,4 @@ skipping svn-info test
 skipping Windows-(only path|specific) tests
 Test requiring writable / skipped
 used to test external credential helpers
+You must set env var GIT_TEST_ALLOW_SUDO=YES in order to run this test
