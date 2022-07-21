@@ -77,7 +77,7 @@
 
 Name:           git
 Version:        2.37.1
-Release:        1%{?rcrev}%{?dist}
+Release:        1%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1007,6 +1007,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2.37.1-1.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
 * Tue Jul 12 2022 Todd Zullinger <tmz@pobox.com> - 2.37.1-1
 - update to 2.37.1 (CVE-2022-29187)
 
