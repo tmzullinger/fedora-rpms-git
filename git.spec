@@ -76,8 +76,8 @@
 %global _package_note_file  %{_builddir}/%{name}-%{version}%{?rcrev}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.37.1
-Release:        2%{?rcrev}%{?dist}
+Version:        2.37.2
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1007,6 +1007,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Aug 11 2022 Todd Zullinger <tmz@pobox.com> - 2.37.2-1
+- update to 2.37.2
+
 * Sat Jul 23 2022 Todd Zullinger <tmz@pobox.com> - 2.37.1-2
 - require systemd-rpm-macros rather than systemd
 
