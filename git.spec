@@ -77,7 +77,7 @@
 
 Name:           git
 Version:        2.37.2
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -496,8 +496,10 @@ xz -dc '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
 
-# Remove git-archimport from command list
+# Remove git-archimport
+sed -i '/^SCRIPT_PERL += git-archimport\.perl$/d' Makefile
 sed -i '/^git-archimport/d' command-list.txt
+rm git-archimport.perl Documentation/git-archimport.txt
 
 %if %{without cvs}
 # Remove git-cvs* from command list
@@ -643,9 +645,6 @@ rm -rf contrib/scalar
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
 rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree*,t}
 
-# git-archimport is not supported
-find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
-
 %if %{without cvs}
 # Remove git-cvs* and gitcvs*
 find %{buildroot} Documentation \( -type f -o -type l \) \
@@ -663,7 +662,7 @@ rm -f %{buildroot}%{gitexecdir}/mergetools/p4merge
 # Remove unneeded git-remote-testsvn so git-svn can be noarch
 rm -f %{buildroot}%{gitexecdir}/git-remote-testsvn
 
-exclude_re="archimport|email|git-(citool|credential-libsecret|cvs|daemon|gui|instaweb|p4|subtree|svn)|gitk|gitweb|p4merge"
+exclude_re="email|git-(citool|credential-libsecret|cvs|daemon|gui|instaweb|p4|subtree|svn)|gitk|gitweb|p4merge"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -1007,6 +1006,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Aug 14 2022 Todd Zullinger <tmz@pobox.com> - 2.37.2-2
+- consolidate git-archimport removal in %%prep
+
 * Thu Aug 11 2022 Todd Zullinger <tmz@pobox.com> - 2.37.2-1
 - update to 2.37.2
 
