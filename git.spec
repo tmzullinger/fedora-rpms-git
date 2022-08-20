@@ -109,6 +109,16 @@ Source99:       print-failed-test-output
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
+# https://bugzilla.redhat.com/2114531
+# tests: try harder to find open ports for apache, git, and svn
+#
+# https://github.com/tmzullinger/git/commit/aedeaaf788
+Patch1:         0001-t-lib-httpd-try-harder-to-find-a-port-for-apache.patch
+# https://github.com/tmzullinger/git/commit/16750d024c
+Patch2:         0002-t-lib-git-daemon-try-harder-to-find-a-port.patch
+# https://github.com/tmzullinger/git/commit/aa5105dc11
+Patch3:         0003-t-lib-git-svn-try-harder-to-find-a-port.patch
+
 %if %{with docs}
 # pod2man is needed to build Git.3pm
 BuildRequires:  %{_bindir}/pod2man
@@ -794,17 +804,6 @@ GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.36 t5551.25"
 %endif
 # endif aarch64 %%{arm} %%{power64}
 
-%ifarch %{power64}
-# Skip tests which fail on ppc
-#
-# t9115-git-svn-dcommit-funky-renames is disabled because it frequently fails.
-# The port it uses (9115) is already in use.  It is unclear if this is
-# due to an issue in the test suite or a conflict with some other process on
-# the build host.  It only appears to occur on ppc-arches.
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t9115"
-%endif
-# endif %%{power64}
-
 %if 0%{?rhel} == 8 && "%{_arch}" == "s390x"
 # Skip tests which fail on s390x on rhel-8
 #
@@ -1009,6 +1008,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Tue Aug 30 2022 Todd Zullinger <tmz@pobox.com> - 2.37.3-1
 - update to 2.37.3
 - remove %%changelog entries prior to 2020
+- tests: try harder to find open ports for apache, git, and svn
 
 * Sun Aug 14 2022 Todd Zullinger <tmz@pobox.com> - 2.37.2-2
 - consolidate git-archimport removal in %%prep
