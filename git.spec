@@ -76,8 +76,8 @@
 %global _package_note_file  %{_builddir}/%{name}-%{version}%{?rcrev}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.37.2
-Release:        2%{?rcrev}%{?dist}
+Version:        2.37.3
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1006,6 +1006,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Aug 30 2022 Todd Zullinger <tmz@pobox.com> - 2.37.3-1
+- update to 2.37.3
+
 * Sun Aug 14 2022 Todd Zullinger <tmz@pobox.com> - 2.37.2-2
 - consolidate git-archimport removal in %%prep
 
