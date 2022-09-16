@@ -70,14 +70,14 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 # Set path to the package-notes linker script
 %global _package_note_file  %{_builddir}/%{name}-%{version}%{?rcrev}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.37.3
-Release:        1%{?rcrev}%{?dist}
+Version:        2.38.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -118,6 +118,12 @@ Patch1:         0001-t-lib-httpd-try-harder-to-find-a-port-for-apache.patch
 Patch2:         0002-t-lib-git-daemon-try-harder-to-find-a-port.patch
 # https://github.com/tmzullinger/git/commit/aa5105dc11
 Patch3:         0003-t-lib-git-svn-try-harder-to-find-a-port.patch
+
+# fix a few broken links
+# https://lore.kernel.org/git/20220916062303.3736166-1-tmz@pobox.com/
+# https://lore.kernel.org/git/20220916062303.3736166-2-tmz@pobox.com/
+Patch4:         0001-docs-fix-a-few-recently-broken-links.patch
+Patch5:         0002-api-docs-link-to-html-version-of-api-trace2.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -800,7 +806,7 @@ GIT_SKIP_TESTS=""
 # to limit the maximum stack size.
 # t5541.36 'push 2000 tags over http'
 # t5551.25 'clone the 2,000 tag repo to check OS command line overflow'
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.36 t5551.25"
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.37 t5551.25"
 %endif
 # endif aarch64 %%{arm} %%{power64}
 
@@ -1005,6 +1011,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Sep 16 2022 Todd Zullinger <tmz@pobox.com> - 2.38.0-0.0.rc0
+- update to 2.38.0-rc0
+
 * Tue Aug 30 2022 Todd Zullinger <tmz@pobox.com> - 2.37.3-1
 - update to 2.37.3
 - remove %%changelog entries prior to 2020
