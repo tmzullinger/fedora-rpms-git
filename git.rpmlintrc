@@ -1,5 +1,3 @@
-from Config import *
-
 # the dictionary is a bit limited
 addFilter("git.* spelling-error %description .* subpackages")
 addFilter("git-subtree.* spelling-error %description .* (subdirectory|subproject|subtree)")
@@ -23,5 +21,16 @@ addFilter("git-core\..*: W: no-manual-page-for-binary")
 # similarly ignore the warning when git-cvs and git-p4 are disabled
 addFilter("git.* obsolete-not-provided git-(cvs|gnome-keyring|p4)")
 
-# we BR emacs which requires emacs-common and provides %{_emacs_version}
-addFilter("git.(spec|src): .* Possible unexpanded macro in: Requires:.*emacs-filesystem >= %{_emacs_version}")
+# git-svn has both man and html docs and only a single command
+addFilter('git-svn\..*: W: package-with-huge-docs')
+
+# ignore potential "bashisms" in docs
+addFilter('git-core-doc\.noarch: W: potential-bashisms /usr/share/doc/git/')
+
+# ignore unused-direct-shlib-dependency for libpcre; while it probably could be
+# removed from some binaries, the cost of doing so isn't worth the gain.
+addFilter('git-(core|daemon)\..*: W: unused-direct-shlib-dependency .* /lib64/libpcre2-.*')
+
+# ignore duplicate gvimdiff/nvimdiff files; they are only 29 bytes, sourcing the same base
+# vimdiff mergetool
+addFilter('git-core\..*: W: files-duplicate /usr/libexec/git-core/mergetools/[gn]vimdiff')
