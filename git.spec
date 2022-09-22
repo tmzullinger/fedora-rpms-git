@@ -478,6 +478,7 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 
 %package subtree
 Summary:        Git tools to merge and split repositories
+BuildArch:      noarch
 Requires:       git-core = %{version}-%{release}
 %description subtree
 Git subtrees allow subprojects to be included within a subdirectory
@@ -1007,6 +1008,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Wed Sep 21 2022 Todd Zullinger <tmz@pobox.com> - 2.38.0-0.1.rc1
 - update to 2.38.0-rc1
+- git-subtree sub-package is noarch
 
 * Fri Sep 16 2022 Todd Zullinger <tmz@pobox.com> - 2.38.0-0.0.rc0
 - update to 2.38.0-rc0
