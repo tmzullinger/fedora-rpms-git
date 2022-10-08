@@ -34,3 +34,6 @@ addFilter('git-(core|daemon)\..*: W: unused-direct-shlib-dependency .* /lib64/li
 # ignore duplicate gvimdiff/nvimdiff files; they are only 29 bytes, sourcing the same base
 # vimdiff mergetool
 addFilter('git-core\..*: W: files-duplicate /usr/libexec/git-core/mergetools/[gn]vimdiff')
+
+# ignore non-standard-dir-in-var for gitweb (#479613)
+addFilter('gitweb.noarch: W: non-standard-dir-in-var www')
