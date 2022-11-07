@@ -79,7 +79,7 @@ Name:           git
 Version:        2.38.1
 Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
-License:        GPLv2
+License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
 Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
 Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
@@ -1012,6 +1012,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Mon Nov 07 2022 Todd Zullinger <tmz@pobox.com> - 2.38.1-2
 - don't ship contrib/persistent-https as documentation
+- update license data and convert to SPDX format
 
 * Tue Oct 18 2022 Todd Zullinger <tmz@pobox.com> - 2.38.1-1
 - update to 2.38.1 (CVE-2022-39253, CVE-2022-39260)
