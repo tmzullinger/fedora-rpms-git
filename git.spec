@@ -77,7 +77,7 @@
 
 Name:           git
 Version:        2.38.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -650,6 +650,10 @@ install -Dpm 0755 contrib/diff-highlight/diff-highlight \
     %{buildroot}%{_datadir}/git-core/contrib/diff-highlight
 rm -rf contrib/diff-highlight/{Makefile,diff-highlight,*.perl,t}
 
+# Remove contrib/persistent-https; a) this code requires compilation; and b) it
+# is licensed differently than git
+rm -rf contrib/persistent-https
+
 # Remove contrib/scalar to avoid cruft in the git-core-doc docdir
 rm -rf contrib/scalar
 
@@ -1006,6 +1010,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Nov 07 2022 Todd Zullinger <tmz@pobox.com> - 2.38.1-2
+- don't ship contrib/persistent-https as documentation
+
 * Tue Oct 18 2022 Todd Zullinger <tmz@pobox.com> - 2.38.1-1
 - update to 2.38.1 (CVE-2022-39253, CVE-2022-39260)
 
