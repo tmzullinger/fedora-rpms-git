@@ -5,6 +5,9 @@ addFilter("git-subtree.* spelling-error %description .* (subdirectory|subproject
 # git-core-doc requires git-core, which provides the symlink target
 addFilter("git(-core-doc)?\..*: W: dangling-relative-symlink /usr/share/doc/git/contrib/hooks ../../../git-core/contrib/hooks")
 
+# gitk requires git, which provides the symlink target
+addFilter("gitk\.noarch: W: dangling-relative-symlink /usr/share/bash-completion/completions/gitk git")
+
 # git-gui requires git, which provides the git binary
 addFilter("git-gui.noarch: W: desktopfile-without-binary /usr/share/applications/git-gui.desktop git")
 
