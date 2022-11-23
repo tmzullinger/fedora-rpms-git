@@ -67,14 +67,14 @@
 %{?!bash_completions_dir:%global bash_completions_dir %{_datadir}/bash-completion/completions}
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 # Set path to the package-notes linker script
 %global _package_note_file  %{_builddir}/%{name}-%{version}%{?rcrev}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.38.1
-Release:        3%{?rcrev}%{?dist}
+Version:        2.39.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -184,6 +184,8 @@ BuildRequires:  acl
 %if 0%{?fedora} || 0%{?rhel} >= 8
 # Needed by t5540-http-push-webdav.sh
 BuildRequires: apr-util-bdb
+# Needed by t5559-http-fetch-smart-http2.sh
+BuildRequires: mod_http2
 %endif
 # endif fedora or rhel >= 8
 BuildRequires:  bash
@@ -793,7 +795,17 @@ find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
 # endif with docs && with linkcheck
 
 # Tests to skip on all releases and architectures
-GIT_SKIP_TESTS=""
+#
+# t5559-http-fetch-smart-http2 runs t5551-http-fetch-smart with
+# HTTP_PROTO=HTTP/2.  Unfortunately, it fails quite regularly.
+# https://lore.kernel.org/git/Y4fUntdlc1mqwad5@pobox.com/
+GIT_SKIP_TESTS="t5559"
+
+%if 0%{?rhel} && 0%{?rhel} < 8
+# Skip tests which require mod_http2 on el7
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5559"
+%endif
+# endif rhel < 8
 
 %ifarch aarch64 %{arm} %{power64}
 # Skip tests which fail on aarch64, arm, and ppc
@@ -1008,6 +1020,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Nov 23 2022 Todd Zullinger <tmz@pobox.com> - 2.39.0-0.0.rc0
+- update to 2.39.0-rc0
+- add mod_http2 BuildRequires for tests
+
 * Sat Nov 12 2022 Todd Zullinger <tmz@pobox.com> - 2.38.1-3
 - use %%bash_completions_dir
 
