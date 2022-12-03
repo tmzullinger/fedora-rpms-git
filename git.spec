@@ -257,6 +257,7 @@ BuildRequires:  subversion-perl
 BuildRequires:  tar
 BuildRequires:  time
 BuildRequires:  zip
+BuildRequires:  zstd
 %endif
 # endif with tests
 
@@ -864,7 +865,7 @@ export GIT_TEST_SVN_HTTPD=true
 
 # Create tmpdir for test output and update GIT_TEST_OPTS
 # Also update GIT-BUILD-OPTIONS to keep make from any needless rebuilding
-testdir=$(mktemp -d -p /tmp git-t.XXXX)
+export testdir=$(mktemp -d -p /tmp git-t.XXXX)
 sed -i "s@^GIT_TEST_OPTS = .*@& --root=$testdir@" config.mak
 touch -r GIT-BUILD-OPTIONS ts
 sed -i "s@\(GIT_TEST_OPTS='.*\)'@\1 --root=$testdir'@" GIT-BUILD-OPTIONS
