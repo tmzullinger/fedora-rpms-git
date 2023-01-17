@@ -14,6 +14,13 @@
 %bcond_with                 linkcheck
 %endif
 
+# Settings for Fedora >= 38
+%if 0%{?fedora} >= 38
+%bcond_with                 perl_modcompat
+%else
+%bcond_without              perl_modcompat
+%endif
+
 # Settings for Fedora and EL >= 9
 %if 0%{?fedora} || 0%{?rhel} >= 9
 %bcond_without              asciidoctor
@@ -464,6 +471,9 @@ Requires:       git = %{version}-%{release}
 Summary:        Perl interface to Git
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
+%if %{with perl_modcompat}
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+%endif
 %description -n perl-Git
 %{summary}.
 
@@ -471,6 +481,9 @@ Requires:       git = %{version}-%{release}
 Summary:        Perl interface to Git::SVN
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
+%if %{with perl_modcompat}
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+%endif
 %description -n perl-Git-SVN
 %{summary}.
 
