@@ -74,14 +74,14 @@
 %{?!bash_completions_dir:%global bash_completions_dir %{_datadir}/bash-completion/completions}
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 # Set path to the package-notes linker script
 %global _package_note_file  %{_builddir}/%{name}-%{version}%{?rcrev}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.39.2
-Release:        1%{?rcrev}%{?dist}
+Version:        2.40.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -1035,6 +1035,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Feb 24 2023 Todd Zullinger <tmz@pobox.com> - 2.40.0-0.0.rc0
+- update to 2.40.0-rc0
+
 * Tue Feb 14 2023 Todd Zullinger <tmz@pobox.com> - 2.39.2-1
 - update to 2.39.2 (CVE-2023-22490, CVE-2023-23946)
 
