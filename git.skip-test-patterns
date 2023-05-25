@@ -22,6 +22,7 @@ missing SYMLINKS_WINDOWS
 missing TAR_NEEDS_PAX_FALLBACK
 missing UTF8_NFD_TO_NFC
 missing WINDOWS
+skipped: skip all tests in t5559
 skipping case insensitive tests
 skipping git p4 tests
 skipping remote-svn tests, python not available
