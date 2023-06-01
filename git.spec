@@ -73,9 +73,6 @@
 # Define %%bash_completions_dir for EL <= 9
 %{?!bash_completions_dir:%global bash_completions_dir %{_datadir}/bash-completion/completions}
 
-# Adjust Source URL path for release candidates
-%global rcpath  %(test "%{version}" = "%{real_version}" || echo testing/)
-
 # Set path to the package-notes linker script
 %global _package_note_file  %{_builddir}/%{name}-%{real_version}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
@@ -88,6 +85,10 @@ URL:            https://git-scm.com/
 
 # Note: real_version must be defined _after_ Version
 %global real_version %(echo %{version} | tr '~' '.')
+
+# Adjust Source URL path for release candidates
+%global rcpath  %(test "%{version}" = "%{real_version}" || echo testing/)
+
 Source0:        https://www.kernel.org/pub/software/scm/git/%{rcpath}%{name}-%{real_version}.tar.xz
 Source1:        https://www.kernel.org/pub/software/scm/git/%{rcpath}%{name}-%{real_version}.tar.sign
 
