@@ -78,7 +78,7 @@
 
 Name:           git
 Version:        2.43.0~rc1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -192,9 +192,11 @@ BuildRequires:  zlib-devel >= 1.2
 %if %{with tests}
 # Test suite requirements
 BuildRequires:  acl
-%if 0%{?fedora} || 0%{?rhel} >= 8
-# Needed by t5540-http-push-webdav.sh
+%if (0%{?fedora} && 0%{?fedora} < 40) || (0%{?rhel} >= 8 && 0%{?rhel} < 10)
+# Needed by t5540-http-push-webdav.sh; recent httpd obviates this
 BuildRequires: apr-util-bdb
+%endif
+%if 0%{?fedora} || 0%{?rhel} >= 8
 # Needed by t5559-http-fetch-smart-http2.sh
 BuildRequires: mod_http2
 %endif
@@ -1039,6 +1041,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Nov 14 2023 Joe Orton <jorton@redhat.com> - 2.43.0~rc1-2
+- remove explicit BR for apr-util-bdb (#2247532)
+
 * Wed Nov 08 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0~rc1-1
 - update to 2.43.0-rc1
 
