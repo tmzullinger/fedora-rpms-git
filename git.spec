@@ -77,8 +77,8 @@
 %global _package_note_file  %{_builddir}/%{name}-%{real_version}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.43.0~rc1
-Release:        2%{?dist}
+Version:        2.43.0~rc2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -1041,6 +1041,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Nov 14 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0~rc2-1
+- update to 2.43.0-rc2
+
 * Tue Nov 14 2023 Joe Orton <jorton@redhat.com> - 2.43.0~rc1-2
 - remove explicit BR for apr-util-bdb (#2247532)
 
