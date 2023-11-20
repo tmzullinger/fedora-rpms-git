@@ -77,8 +77,8 @@
 %global _package_note_file  %{_builddir}/%{name}-%{real_version}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.43.0~rc2
-Release:        2%{?dist}
+Version:        2.43.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -1045,6 +1045,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Nov 20 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-1
+- update to 2.43.0
+
 * Thu Nov 16 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0~rc1-3
 - send-email: avoid duplicate specification warnings
 
