@@ -78,7 +78,7 @@
 
 Name:           git
 Version:        2.43.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -130,6 +130,11 @@ Patch3:         0003-t-lib-git-svn-try-harder-to-find-a-port.patch
 # Fix warnings from perl-Getopt-Long >= 2.55
 # https://lore.kernel.org/git/20231114163826.207267-1-tmz@pobox.com/
 Patch4:         0002-send-email-avoid-duplicate-specification-warnings.patch
+
+# Fix t6300 when building with zlib-ng-compat
+# https://lore.kernel.org/git/9feeb6cf-aabf-4002-917f-3f6c27547bc8@web.de/
+# https://github.com/git/git/commit/fbc6526ea6
+Patch5:         0001-t6300-avoid-hard-coding-object-sizes.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -1045,6 +1050,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Dec 14 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-2
+- apply upstream fixes for failing tests with zlib-ng-compat
+
 * Mon Nov 20 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-1
 - update to 2.43.0
 
