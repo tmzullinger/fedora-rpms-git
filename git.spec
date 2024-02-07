@@ -78,7 +78,7 @@
 
 Name:           git
 Version:        2.43.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -244,6 +244,7 @@ BuildRequires:  jgit
 # endif fedora (except i386 and s390x)
 BuildRequires:  mod_dav_svn
 BuildRequires:  openssh-clients
+BuildRequires:  openssl
 BuildRequires:  perl(App::Prove)
 BuildRequires:  perl(CGI)
 BuildRequires:  perl(CGI::Carp)
@@ -1050,6 +1051,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Feb 07 2024 Todd Zullinger <tmz@pobox.com> - 2.43.0-3
+- add openssl BuildRequires httpd tests
+
 * Thu Dec 14 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-2
 - apply upstream fixes for failing tests with zlib-ng-compat
 
