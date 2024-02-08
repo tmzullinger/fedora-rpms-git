@@ -138,7 +138,7 @@ Patch5:         0001-t6300-avoid-hard-coding-object-sizes.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
-BuildRequires:  /usr/bin/pod2man
+BuildRequires:  perl-podlators
 %if %{with asciidoctor}
 BuildRequires:  docbook5-style-xsl
 BuildRequires:  rubygem-asciidoctor
@@ -1051,6 +1051,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Wed Feb 07 2024 Todd Zullinger <tmz@pobox.com> - 2.43.0-3
 - add openssl BuildRequires httpd tests
 - re-enable t5559-http-fetch-smart-http2, BuildRequires: mod_ssl
+- replace pod2man file dep with perl-podlators package dep
 
 * Thu Dec 14 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-2
 - apply upstream fixes for failing tests with zlib-ng-compat
