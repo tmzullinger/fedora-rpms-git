@@ -203,7 +203,7 @@ BuildRequires:  zlib-devel >= 1.2
 BuildRequires:  acl
 %if (0%{?fedora} && 0%{?fedora} < 40) || (0%{?rhel} >= 8 && 0%{?rhel} < 10)
 # Needed by t5540-http-push-webdav.sh; recent httpd obviates this
-BuildRequires: apr-util-bdb
+BuildRequires:  apr-util-bdb
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 8
 # Needed by t5559-http-fetch-smart-http2.sh
