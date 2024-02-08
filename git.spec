@@ -207,7 +207,8 @@ BuildRequires: apr-util-bdb
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 8
 # Needed by t5559-http-fetch-smart-http2.sh
-BuildRequires: mod_http2
+BuildRequires:  mod_http2
+BuildRequires:  mod_ssl
 %endif
 # endif fedora or rhel >= 8
 BuildRequires:  bash
@@ -826,11 +827,7 @@ find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
 # endif with docs && with linkcheck
 
 # Tests to skip on all releases and architectures
-#
-# t5559-http-fetch-smart-http2 runs t5551-http-fetch-smart with
-# HTTP_PROTO=HTTP/2.  Unfortunately, it fails quite regularly.
-# https://lore.kernel.org/git/Y4fUntdlc1mqwad5@pobox.com/
-GIT_SKIP_TESTS="t5559"
+GIT_SKIP_TESTS=""
 
 %if 0%{?rhel} && 0%{?rhel} < 8
 # Skip tests which require mod_http2 on el7
@@ -1053,6 +1050,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Wed Feb 07 2024 Todd Zullinger <tmz@pobox.com> - 2.43.0-3
 - add openssl BuildRequires httpd tests
+- re-enable t5559-http-fetch-smart-http2, BuildRequires: mod_ssl
 
 * Thu Dec 14 2023 Todd Zullinger <tmz@pobox.com> - 2.43.0-2
 - apply upstream fixes for failing tests with zlib-ng-compat
