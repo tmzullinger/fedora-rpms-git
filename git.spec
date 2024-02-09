@@ -77,8 +77,8 @@
 %global _package_note_file  %{_builddir}/%{name}-%{real_version}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.43.0
-Release:        3%{?dist}
+Version:        2.43.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
 URL:            https://git-scm.com/
@@ -126,15 +126,6 @@ Patch1:         0001-t-lib-httpd-try-harder-to-find-a-port-for-apache.patch
 Patch2:         0002-t-lib-git-daemon-try-harder-to-find-a-port.patch
 # https://github.com/tmzullinger/git/commit/aa5105dc11
 Patch3:         0003-t-lib-git-svn-try-harder-to-find-a-port.patch
-
-# Fix warnings from perl-Getopt-Long >= 2.55
-# https://lore.kernel.org/git/20231114163826.207267-1-tmz@pobox.com/
-Patch4:         0002-send-email-avoid-duplicate-specification-warnings.patch
-
-# Fix t6300 when building with zlib-ng-compat
-# https://lore.kernel.org/git/9feeb6cf-aabf-4002-917f-3f6c27547bc8@web.de/
-# https://github.com/git/git/commit/fbc6526ea6
-Patch5:         0001-t6300-avoid-hard-coding-object-sizes.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -1048,6 +1039,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Feb 09 2024 Todd Zullinger <tmz@pobox.com> - 2.43.1-1
+- update to 2.43.1
+
 * Wed Feb 07 2024 Todd Zullinger <tmz@pobox.com> - 2.43.0-3
 - add openssl BuildRequires httpd tests
 - re-enable t5559-http-fetch-smart-http2, BuildRequires: mod_ssl
