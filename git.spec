@@ -77,7 +77,7 @@
 %global _package_note_file  %{_builddir}/%{name}-%{real_version}/.package_note-%{name}-%{version}-%{release}.%{_arch}.ld
 
 Name:           git
-Version:        2.43.1
+Version:        2.44.0~rc0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        BSD-3-Clause AND GPL-2.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT
@@ -1039,6 +1039,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Feb 09 2024 Todd Zullinger <tmz@pobox.com> - 2.44.0~rc0-1
+- update to 2.44.0-rc0
+
 * Fri Feb 09 2024 Todd Zullinger <tmz@pobox.com> - 2.43.1-1
 - update to 2.43.1
 
